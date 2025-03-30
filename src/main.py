@@ -5,7 +5,7 @@ app = FastAPI()
 
 
 @app.get('/api/users/me')
-def main():
+async def main():
     return {
         "result": "true",
         "user": {
