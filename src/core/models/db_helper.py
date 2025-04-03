@@ -1,18 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker, AsyncEngine
 from typing import AsyncGenerator
-from sqlalchemy.orm import declarative_base
 from core.config import settings
-
-DATABASE_URL = "postgresql+asyncpg://postgres:admin@localhost:5432/postgres"
-engine = create_async_engine(DATABASE_URL, echo=True)
-
-Session = async_sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False,
-)
-
-Base = declarative_base()
 
 
 class DatabaseHelper:
