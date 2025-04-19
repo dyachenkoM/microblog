@@ -31,4 +31,3 @@ class User(Base):
         back_populates="followers",
         lazy="joined",
     )
-
