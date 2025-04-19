@@ -1,8 +1,8 @@
 """create users and followers tables
 
-Revision ID: 1e259069acb6
+Revision ID: 0f138460004d
 Revises:
-Create Date: 2025-04-19 13:29:25.289860
+Create Date: 2025-04-19 13:46:41.095094
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "1e259069acb6"
+revision: str = "0f138460004d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,7 +26,7 @@ def upgrade() -> None:
         "users",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_users")),
     )
     op.create_index(op.f("ix_users_name"), "users", ["name"], unique=False)
     op.create_table(
@@ -36,12 +36,16 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["follower_id"],
             ["users.id"],
+            name=op.f("fk_followers_follower_id_users"),
         ),
         sa.ForeignKeyConstraint(
             ["following_id"],
             ["users.id"],
+            name=op.f("fk_followers_following_id_users"),
         ),
-        sa.PrimaryKeyConstraint("follower_id", "following_id"),
+        sa.PrimaryKeyConstraint(
+            "follower_id", "following_id", name=op.f("pk_followers")
+        ),
     )
     # ### end Alembic commands ###
 
