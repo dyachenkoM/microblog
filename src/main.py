@@ -8,7 +8,7 @@ from core.models import User
 from contextlib import asynccontextmanager
 from api import router as api_router
 from core.config import settings
-from core.models import db_helper, Base
+from core.models import db_helper
 from core.schemas import UserResponse, UserFull
 
 
