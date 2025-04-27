@@ -29,3 +29,4 @@ class UserResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+    
