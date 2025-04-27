@@ -1,15 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 import uvicorn
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy.orm import joinedload
-from core.models import User
 from contextlib import asynccontextmanager
 from api import router as api_router
 from core.config import settings
 from core.models import db_helper
-from core.schemas import UserResponse, UserFull
 
 
 @asynccontextmanager
@@ -20,41 +16,9 @@ async def lifespan(app: FastAPI):
 
 main_app = FastAPI(
     lifespan=lifespan,
+    default_response_class=ORJSONResponse,
 )
-main_app.include_router(api_router,
-                        prefix=settings.api.prefix,
-                        )
-
-
-@main_app.get('/api/users/me')
-async def main():
-    return {
-        "result": "true",
-        "user": {
-            "id": 1,
-            "name": "Maksim",
-            "followers": [],
-            "followings": []
-        }
-    }
-
-
-@main_app.get('/api/users/{user_id}')
-async def get_user(user_id: int, session: AsyncSession = Depends(db_helper.session_getter)) -> UserResponse:
-    result = await session.execute(
-        select(User)
-        .options(
-            joinedload(User.followers),
-            joinedload(User.following),
-        )
-        .where(User.id == user_id)
-    )
-    user = result.unique().scalar_one()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return UserResponse(result='true', user=UserFull.model_validate(user))
+main_app.include_router(api_router)
 
 
 if __name__ == "__main__":
