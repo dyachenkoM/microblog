@@ -38,3 +38,19 @@ async def follow_user(session: AsyncSession, follower_id: int, following_id: int
     await session.commit()
 
     return {"result": "true"}
+
+
+async def unfollow_user(session: AsyncSession, follower_id: int, following_id: int) -> dict:
+    stmt = select(FollowersTable).where(
+        FollowersTable.follower_id == follower_id,
+        FollowersTable.following_id == following_id
+    )
+    follow_relation = await session.scalar(stmt)
+
+    if not follow_relation:
+        return {"result": "false", "message": "Subscription not found"}
+
+    await session.delete(follow_relation)
+    await session.commit()
+
+    return {"result": "true"}
