@@ -4,6 +4,13 @@ from typing import List
 from .base import Base
 
 
+class UserKey(Base):
+    __tablename__ = "users_keys"
+
+    api_key: Mapped[str] = mapped_column(String, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), unique=True)
+
+
 class FollowersTable(Base):
     __tablename__ = "followers"
 
