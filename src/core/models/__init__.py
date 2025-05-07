@@ -3,11 +3,12 @@ __all__ = (
     "Base",
     "User",
     "FollowersTable",
-    "UserKey"
+    "UserKey",
 )
 
+from .association_tables import UserKey
 from .db_helper import db_helper
 from .base import Base
 from .user import User
 from .user import FollowersTable
-from .user import UserKey
+from .tweet import Tweet
