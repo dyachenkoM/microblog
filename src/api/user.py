@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import db_helper
+from core import db_helper
 from core.schemas import UserResponse, UserFull
 from crud.user import (get_user_by_id,
                        get_user_id_by_api_key,

@@ -5,7 +5,7 @@ import uvicorn
 from contextlib import asynccontextmanager
 from api import router as api_router
 from core.config import settings
-from core.models import db_helper
+from core import db_helper
 
 
 @asynccontextmanager
