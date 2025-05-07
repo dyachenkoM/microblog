@@ -1,21 +1,9 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship, foreign
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import String, Integer
 from typing import List
+
+from .association_tables import FollowersTable
 from .base import Base
-
-
-class UserKey(Base):
-    __tablename__ = "users_keys"
-
-    api_key: Mapped[str] = mapped_column(String, primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), unique=True)
-
-
-class FollowersTable(Base):
-    __tablename__ = "followers"
-
-    follower_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), primary_key=True)
-    following_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), primary_key=True)
 
 
 class User(Base):
@@ -38,3 +26,17 @@ class User(Base):
         back_populates="followers",
         lazy="joined",
     )
+
+    tweets: Mapped[List["Tweet"]] = relationship(
+        back_populates="author",
+        lazy="dynamic",
+    )
+
+    liked_tweets: Mapped[List["Tweet"]] = relationship(
+        secondary="tweets_likes",
+        back_populates="likes",
+        lazy="dynamic",
+    )
+
+
+from .tweet import Tweet  # noqa
