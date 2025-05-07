@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List
 
 
 class UserShort(BaseModel):
@@ -14,8 +13,8 @@ class UserShort(BaseModel):
 class UserFull(BaseModel):
     id: int
     name: str
-    followers: List[UserShort]
-    following: List[UserShort]
+    followers: list[UserShort]
+    following: list[UserShort]
 
     model_config = {
         "from_attributes": True
