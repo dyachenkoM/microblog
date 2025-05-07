@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper
@@ -16,14 +16,20 @@ router = APIRouter(
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_my_info(request: Request, session: AsyncSession = Depends(db_helper.session_getter)) -> UserResponse:
+async def get_my_info(request: Request,
+                      session: AsyncSession = Depends(db_helper.session_getter),
+                      api_key: str | None = Header(default="api-alice")
+                      ) -> UserResponse:
     api_key = request.headers.get("api-key")
     user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
     return await get_user(user_id=user_id, session=session)
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get_user(user_id: int, session: AsyncSession = Depends(db_helper.session_getter)) -> UserResponse:
+async def get_user(user_id: int,
+                   session: AsyncSession = Depends(db_helper.session_getter),
+                   api_key: str | None = Header(default="api-alice")
+                   ) -> UserResponse:
     user = await get_user_by_id(session=session, user_id=user_id)
 
     if not user:
@@ -33,7 +39,11 @@ async def get_user(user_id: int, session: AsyncSession = Depends(db_helper.sessi
 
 
 @router.post("/{target_id}/follow")
-async def follow_user(target_id: int, request: Request, session: AsyncSession = Depends(db_helper.session_getter)):
+async def follow_user(target_id: int,
+                      request: Request,
+                      session: AsyncSession = Depends(db_helper.session_getter),
+                      api_key: str | None = Header(default="api-alice")
+                      ):
     api_key = request.headers.get("api-key")
     user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
 
@@ -42,7 +52,11 @@ async def follow_user(target_id: int, request: Request, session: AsyncSession = 
 
 
 @router.delete("/{target_id}/follow")
-async def unfollow_user(target_id: int, request: Request, session: AsyncSession = Depends(db_helper.session_getter)):
+async def unfollow_user(target_id: int,
+                        request: Request,
+                        session: AsyncSession = Depends(db_helper.session_getter),
+                        api_key: str | None = Header(default="api-alice")
+                        ):
     api_key = request.headers.get("api-key")
     user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
 
