@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core import db_helper
 from core.schemas import UserResponse, UserFull
 from crud.user import (get_user_by_id,
-                       get_user_id_by_api_key,
+                       get_user_by_api_key,
                        follow_user as follow,
                        unfollow_user as unfollow,
                        )
@@ -21,7 +21,7 @@ async def get_my_info(request: Request,
                       api_key: str | None = Header(default="api-alice")
                       ) -> UserResponse:
     api_key = request.headers.get("api-key")
-    user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
+    user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
     return await get_user(user_id=user_id, session=session)
 
 
@@ -45,10 +45,10 @@ async def follow_user(target_id: int,
                       api_key: str | None = Header(default="api-alice")
                       ):
     api_key = request.headers.get("api-key")
-    user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
+    user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
     res = await follow(session=session, follower_id=user_id, following_id=target_id)
-    return 201, res
+    return res
 
 
 @router.delete("/{target_id}/follow")
@@ -58,7 +58,7 @@ async def unfollow_user(target_id: int,
                         api_key: str | None = Header(default="api-alice")
                         ):
     api_key = request.headers.get("api-key")
-    user_id = await get_user_id_by_api_key(session=session, api_key=api_key)
+    user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
     res = await unfollow(session=session, follower_id=user_id, following_id=target_id)
-    return 201, res
+    return res
