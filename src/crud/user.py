@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -25,11 +25,12 @@ async def get_user_by_id(session: AsyncSession, user_id: int) -> User:
     return result
 
 
-async def get_user_id_by_api_key(session: AsyncSession, api_key: str) -> int:
+async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User:
     stmt = select(UserKey).where(UserKey.api_key == api_key)
 
-    result = await session.scalar(stmt)
-    return result.user_id
+    user_id = await session.scalar(stmt)
+    user = await get_user_by_id(session=session, user_id=user_id.user_id)
+    return user
 
 
 async def follow_user(session: AsyncSession, follower_id: int, following_id: int) -> dict:
