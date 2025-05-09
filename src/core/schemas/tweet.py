@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from user import UserShort
+from .user import UserShort
 
 
 class Tweet(BaseModel):
