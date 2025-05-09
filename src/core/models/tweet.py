@@ -20,7 +20,8 @@ class Tweet(Base):
         secondary=TweetAttachment.__table__,
         back_populates="tweets",
         lazy="joined",
-        cascade="all, delete"
+        cascade="all, delete",
+        single_parent=True
     )
     likes: Mapped[List["User"]] = relationship(
         secondary=TweetLikes.__table__,
