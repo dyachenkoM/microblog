@@ -11,6 +11,13 @@ class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
 
+class S3Config(BaseModel):
+    access_key: str
+    secret_key: str
+    bucket_name: str
+    endpoint_url: str
+
+
 class DatabaseConfig(BaseModel):
     url: PostgresDsn
     echo: bool = False
@@ -37,7 +44,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
+    s3: S3Config
 
 
 settings = Settings()
-print(settings.db.url)
