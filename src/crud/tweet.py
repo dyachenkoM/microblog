@@ -27,7 +27,27 @@ async def get_all_tweets(session: AsyncSession, api_key: str) -> [Tweet, ]:
     result = await session.execute(stmt)
     tweets = result.unique().scalars().all()
 
-    return tweets
+    formatted_tweets = []
+    for tweet in tweets:
+        formatted_tweet = {
+            "id": tweet.id,
+            "content": tweet.content,
+            "attachments": [attachment.link for attachment in tweet.attachments],
+            "author": {
+                "id": tweet.author.id,
+                "name": tweet.author.name
+            },
+            "likes": [
+                {
+                    "user_id": user.id,
+                    "name": user.name
+                }
+                for user in tweet.likes
+            ]
+        }
+        formatted_tweets.append(formatted_tweet)
+
+    return formatted_tweets
 
 
 async def create_tweet(
