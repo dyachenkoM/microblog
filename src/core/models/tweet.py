@@ -30,17 +30,17 @@ class Tweet(Base):
     )
 
     @hybrid_property
-    def likes_count(self) -> int:
-        likes = cast(List[User], self.likes)
-        return len(likes) if likes else 0
+    def likes_count(self):
+        if hasattr(self, '_likes_count'):
+            return self._likes_count
+        return len(self.likes) if hasattr(self, 'likes') else 0
 
     @likes_count.expression
-    def likes_count(self):
-        cls = self.__class__
+    def likes_count(cls):
         return (
             select(func.count(TweetLikes.user_id))
             .where(TweetLikes.tweet_id == cls.id)
-            .scalar_subquery()
+            .label("likes_count")
         )
 
 from .user import User  # noqa
