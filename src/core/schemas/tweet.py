@@ -7,7 +7,7 @@ from .user import UserShort
 class Tweet(BaseModel):
     id: int
     content: str
-    attachments: list[str]
+    attachments: list[str | None]
     author: UserShort
     likes: list[UserShort]
 
@@ -20,12 +20,24 @@ class TweetResponse(BaseModel):
     result: bool
     tweets: list[Tweet]
 
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class TweetCreateRequest(BaseModel):
     tweet_data: str = Field(..., min_length=1, max_length=280)
     tweet_media_ids: List[int] | None
 
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class TweetCreateResponse(BaseModel):
     result: bool
     tweet_id: int
+
+    model_config = {
+        "from_attributes": True
+    }
