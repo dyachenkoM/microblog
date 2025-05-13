@@ -39,7 +39,7 @@ async def create_tweet(
 
     stmt = select(Attachment).where(Attachment.id.in_(tweet_media_ids))
     result = await session.execute(stmt)
-    existing_media = result.scalars().all()
+    existing_media = result.scalars().unique().all()
 
     new_tweet = Tweet(
         content=tweet_data,
