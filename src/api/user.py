@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Request, Header
+from fastapi import APIRouter, HTTPException, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
@@ -16,11 +16,9 @@ router = APIRouter(
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_my_info(request: Request,
-                      session: AsyncSession = Depends(db_helper.session_getter),
+async def get_my_info(session: AsyncSession = Depends(db_helper.session_getter),
                       api_key: str | None = Header(default="api-alice")
                       ) -> UserResponse:
-    api_key = request.headers.get("api-key")
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
     return await get_user(user_id=user_id, session=session)
 
@@ -40,11 +38,9 @@ async def get_user(user_id: int,
 
 @router.post("/{target_id}/follow")
 async def follow_user(target_id: int,
-                      request: Request,
                       session: AsyncSession = Depends(db_helper.session_getter),
                       api_key: str | None = Header(default="api-alice")
                       ):
-    api_key = request.headers.get("api-key")
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
     res = await follow(session=session, follower_id=user_id, following_id=target_id)
@@ -53,11 +49,9 @@ async def follow_user(target_id: int,
 
 @router.delete("/{target_id}/follow")
 async def unfollow_user(target_id: int,
-                        request: Request,
                         session: AsyncSession = Depends(db_helper.session_getter),
                         api_key: str | None = Header(default="api-alice")
                         ):
-    api_key = request.headers.get("api-key")
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
     res = await unfollow(session=session, follower_id=user_id, following_id=target_id)
