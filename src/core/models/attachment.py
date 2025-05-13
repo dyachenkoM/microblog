@@ -16,7 +16,6 @@ class Attachment(Base):
         secondary=TweetAttachment.__table__,
         back_populates="attachments",
         lazy="joined",
-        cascade="all, delete-orphan"
     )
 
 
