@@ -15,7 +15,7 @@ router = APIRouter(
 @router.post("")
 async def file_upload(file: UploadFile,
                       session: AsyncSession = Depends(db_helper.session_getter),
-                      api_key: str | None = Header(default="api-alice")
+                      api_key: str | None = Header(default="test")
                       ):
     media_url = await s3_client.upload_file(file.file, file.filename)
     media_id = await create_attachment(session=session, url=media_url)

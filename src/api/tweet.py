@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.get("")
 async def get_all_tweets(session: AsyncSession = Depends(db_helper.session_getter),
-                         api_key: str | None = Header(default="api-alice")
+                         api_key: str | None = Header(default="test")
                          ) -> TweetResponse:
     tweets = await crud_get_all_tweets(session=session, api_key=api_key)
     return TweetResponse(result=True, tweets=tweets)
@@ -26,7 +26,7 @@ async def get_all_tweets(session: AsyncSession = Depends(db_helper.session_gette
 @router.post("")
 async def create_tweet(tweet_data: TweetCreateRequest,
                        session: AsyncSession = Depends(db_helper.session_getter),
-                       api_key: str | None = Header(default="api-alice"),
+                       api_key: str | None = Header(default="test"),
                        ) -> TweetCreateResponse:
     tweet = await crud_create_tweet(session=session,
                                     api_key=api_key,
@@ -39,7 +39,7 @@ async def create_tweet(tweet_data: TweetCreateRequest,
 @router.post("/{tweet_id}/likes")
 async def like_tweet(tweet_id: int,
                      session: AsyncSession = Depends(db_helper.session_getter),
-                     api_key: str | None = Header(default="api-alice")
+                     api_key: str | None = Header(default="test")
                      ):
     return await crud_like_tweet(session=session, tweet_id=tweet_id, api_key=api_key)
 
@@ -47,6 +47,6 @@ async def like_tweet(tweet_id: int,
 @router.delete("/{tweet_id}/likes")
 async def dislike_tweet(tweet_id: int,
                         session: AsyncSession = Depends(db_helper.session_getter),
-                        api_key: str | None = Header(default="api-alice")
+                        api_key: str | None = Header(default="test")
                         ):
     return await crud_dislike_tweet(session=session, tweet_id=tweet_id, api_key=api_key)

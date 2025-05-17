@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.get("/me", response_model=UserResponse)
 async def get_my_info(session: AsyncSession = Depends(db_helper.session_getter),
-                      api_key: str | None = Header(default="api-alice")
+                      api_key: str | None = Header(default="test")
                       ) -> UserResponse:
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
     return await get_user(user_id=user_id, session=session)
@@ -26,7 +26,7 @@ async def get_my_info(session: AsyncSession = Depends(db_helper.session_getter),
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int,
                    session: AsyncSession = Depends(db_helper.session_getter),
-                   api_key: str | None = Header(default="api-alice")
+                   api_key: str | None = Header(default="test")
                    ) -> UserResponse:
     user = await get_user_by_id(session=session, user_id=user_id)
 
@@ -39,7 +39,7 @@ async def get_user(user_id: int,
 @router.post("/{target_id}/follow")
 async def follow_user(target_id: int,
                       session: AsyncSession = Depends(db_helper.session_getter),
-                      api_key: str | None = Header(default="api-alice")
+                      api_key: str | None = Header(default="test")
                       ):
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
@@ -50,7 +50,7 @@ async def follow_user(target_id: int,
 @router.delete("/{target_id}/follow")
 async def unfollow_user(target_id: int,
                         session: AsyncSession = Depends(db_helper.session_getter),
-                        api_key: str | None = Header(default="api-alice")
+                        api_key: str | None = Header(default="test")
                         ):
     user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
