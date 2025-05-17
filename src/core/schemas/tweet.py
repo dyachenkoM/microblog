@@ -4,12 +4,21 @@ from pydantic import BaseModel, Field
 from .user import UserShort
 
 
+class UserLike(BaseModel):
+    user_id: int
+    name: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
 class Tweet(BaseModel):
     id: int
     content: str
     attachments: list[str | None]
     author: UserShort
-    likes: list[UserShort]
+    likes: list[UserLike]
 
     model_config = {
         "from_attributes": True
