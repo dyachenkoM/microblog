@@ -21,4 +21,4 @@ RUN uv sync
 WORKDIR /app/src
 
 CMD uv run alembic upgrade head && \
-    uv run uvicorn main:main_app --host ${APP_HOST} --port ${APP_PORT}
+    uv run uvicorn main:main_app --host ${APP_HOST} --port ${APP_PORT} --reload
