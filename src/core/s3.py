@@ -12,6 +12,7 @@ class S3Client:
                  secret_key: str,
                  endpoint_url: str,
                  bucket_name: str,
+                 endpoint_url_upload: str,
                  ):
         self.config = {
             "aws_access_key_id": access_key,
@@ -23,6 +24,7 @@ class S3Client:
         self.access_key = access_key
         self.secret_key = secret_key
         self.endpoint_url = endpoint_url
+        self.endpoint_url_upload = endpoint_url_upload
 
     @asynccontextmanager
     async def get_client(self):
@@ -39,12 +41,13 @@ class S3Client:
                 Key=name,
                 Body=file,
             )
-        return f"{self.endpoint_url}/{self.bucket_name}/{name}"
+        return f"{self.endpoint_url_upload}/{self.bucket_name}/{name}"
 
 
 s3_client = S3Client(
     access_key=settings.s3.access_key,
     secret_key=settings.s3.secret_key,
     endpoint_url=settings.s3.endpoint_url,
-    bucket_name=settings.s3.bucket_name
+    bucket_name=settings.s3.bucket_name,
+    endpoint_url_upload=settings.s3.endpoint_url_upload,
 )

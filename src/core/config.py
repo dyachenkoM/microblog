@@ -16,6 +16,7 @@ class S3Config(BaseModel):
     secret_key: str
     bucket_name: str
     endpoint_url: str
+    endpoint_url_upload: str
 
 
 class DatabaseConfig(BaseModel):
