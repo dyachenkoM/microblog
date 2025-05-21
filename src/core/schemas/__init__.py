@@ -10,4 +10,4 @@ __all__ = (
 
 from .user import UserResponse, UserFull, UserShort
 from .tweet import TweetResponse, TweetCreateRequest, TweetCreateResponse
-from .error import ErrorResponse
+from .common import ErrorResponse
