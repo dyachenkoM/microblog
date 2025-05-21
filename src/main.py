@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from contextlib import asynccontextmanager
-from typing import AsyncIterator, Any
+from typing import AsyncIterator
 from api import router as api_router
 from core import db_helper
 
@@ -15,7 +15,7 @@ class AppState:
 def setup_logging() -> logging.Logger:
     """Настройка логгера для всего приложения"""
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[logging.StreamHandler()]
     )

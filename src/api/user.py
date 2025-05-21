@@ -5,14 +5,10 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
-from starlette import status
-
 from core import db_helper
 from core.schemas import UserResponse, SuccessResponse, UserFull
-from core.exception import (
-    APIError,
-    UserNotFoundError,
-)
+from core.exception import UserNotFoundError, handle_error
+
 from crud.user import (
     get_user_by_id,
     get_user_by_api_key,
@@ -28,29 +24,6 @@ router = APIRouter(
 logger = logging.getLogger("route_user")
 
 
-def handle_error(e: Exception) -> JSONResponse:
-    """Унифицированный обработчик ошибок"""
-    if isinstance(e, APIError):
-        status_code = e.status_code
-        error_type = e.error_type
-        error_message = e.error_message
-    else:
-        # Логируем неожиданные ошибки
-        logger.error(f"Unexpected error: {str(e)}", exc_info=True)
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        error_type = "internal_error"
-        error_message = "Internal server error"
-
-    return JSONResponse(
-        status_code=status_code,
-        content={
-            "result": False,
-            "error_type": error_type,
-            "error_message": error_message
-        }
-    )
-
-
 async def get_current_user_id(
         session: AsyncSession = Depends(db_helper.session_getter),
         api_key: Optional[str] = Header(default="test")
@@ -62,7 +35,7 @@ async def get_current_user_id(
         user = await get_user_by_api_key(session=session, api_key=api_key)
         return user.id
     except Exception as e:
-        raise handle_error(e)
+        raise handle_error(e, logger)
 
 
 @router.get("/me", response_model=UserResponse)
@@ -74,7 +47,7 @@ async def get_my_info(
         user = await get_user_by_id(session=session, user_id=user_id)
         return UserResponse(result="true", user=UserFull.model_validate(user))
     except Exception as e:
-        return handle_error(e)
+        return handle_error(e, logger)
 
 
 @router.get("/{user_id}", response_model=UserResponse)
@@ -86,7 +59,7 @@ async def get_user(
         user = await get_user_by_id(session=session, user_id=user_id)
         return UserResponse(result="true", user=UserFull.model_validate(user))
     except Exception as e:
-        return handle_error(e)
+        return handle_error(e, logger)
 
 
 @router.post("/{target_id}/follow", response_model=SuccessResponse)
@@ -98,7 +71,7 @@ async def follow_user(
     try:
         return await follow(session=session, follower_id=user_id, following_id=target_id)
     except Exception as e:
-        return handle_error(e)
+        return handle_error(e, logger)
 
 
 @router.delete("/{target_id}/follow", response_model=SuccessResponse)
@@ -110,4 +83,4 @@ async def unfollow_user(
     try:
         return await unfollow(session=session, follower_id=user_id, following_id=target_id)
     except Exception as e:
-        return handle_error(e)
+        return handle_error(e, logger)
