@@ -5,7 +5,9 @@ __all__ = (
     "TweetResponse",
     "TweetCreateRequest",
     "TweetCreateResponse",
+    "ErrorResponse",
 )
 
 from .user import UserResponse, UserFull, UserShort
 from .tweet import TweetResponse, TweetCreateRequest, TweetCreateResponse
+from .error import ErrorResponse
