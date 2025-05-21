@@ -1,6 +1,7 @@
 from fastapi import status
-from fastapi.responses import JSONResponse
 import logging
+
+from core.schemas import ErrorResponse
 
 
 class APIError(Exception):
@@ -21,6 +22,12 @@ class UserNotFoundError(APIError):
     error_message = "User not found"
 
 
+class TweetNotFoundError(APIError):
+    status_code = status.HTTP_404_NOT_FOUND
+    error_type = "not_found"
+    error_message = "Tweet not found"
+
+
 class AlreadyFollowingError(APIError):
     status_code = status.HTTP_400_BAD_REQUEST
     error_type = "already_following"
@@ -39,7 +46,7 @@ class SubscriptionNotFoundError(APIError):
     error_message = "Subscription not found"
 
 
-def handle_error(e: Exception, logger: logging.Logger) -> JSONResponse:
+def handle_error(e: Exception, logger: logging.Logger) -> ErrorResponse:
     """Унифицированный обработчик ошибок"""
     if isinstance(e, APIError):
         status_code = e.status_code
@@ -51,11 +58,6 @@ def handle_error(e: Exception, logger: logging.Logger) -> JSONResponse:
         error_type = "internal_error"
         error_message = "Internal server error"
 
-    return JSONResponse(
-        status_code=status_code,
-        content={
-            "result": False,
-            "error_type": error_type,
-            "error_message": error_message
-        }
-    )
+    return ErrorResponse(result=False,
+                         error_type=error_type,
+                         error_message=error_message)
