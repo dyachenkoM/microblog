@@ -27,7 +27,7 @@ router = APIRouter(
 logger = logging.getLogger("route_tweet")
 
 
-@router.get("")
+@router.get("", response_model=TweetResponse)
 async def get_all_tweets(session: AsyncSession = Depends(db_helper.session_getter),
                          api_key: str | None = Header(default="test")
                          ) -> TweetResponse | ErrorResponse:
@@ -40,7 +40,7 @@ async def get_all_tweets(session: AsyncSession = Depends(db_helper.session_gette
         return handle_error(e, logger)
 
 
-@router.post("")
+@router.post("", response_model=TweetCreateResponse)
 async def create_tweet(tweet_data: TweetCreateRequest,
                        session: AsyncSession = Depends(db_helper.session_getter),
                        api_key: str | None = Header(default="test"),
@@ -58,7 +58,7 @@ async def create_tweet(tweet_data: TweetCreateRequest,
         return handle_error(e, logger)
 
 
-@router.post("/{tweet_id}/likes")
+@router.post("/{tweet_id}/likes", response_model=SuccessResponse)
 async def like_tweet(tweet_id: int,
                      session: AsyncSession = Depends(db_helper.session_getter),
                      api_key: str | None = Header(default="test")
@@ -74,7 +74,7 @@ async def like_tweet(tweet_id: int,
         return handle_error(e, logger)
 
 
-@router.delete("/{tweet_id}/likes")
+@router.delete("/{tweet_id}/likes", response_model=SuccessResponse)
 async def dislike_tweet(tweet_id: int,
                         session: AsyncSession = Depends(db_helper.session_getter),
                         api_key: str | None = Header(default="test")
