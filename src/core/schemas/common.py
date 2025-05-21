@@ -8,4 +8,4 @@ class ErrorResponse(BaseModel):
 
 
 class SuccessResponse(BaseModel):
-    result: bool = True
+    result: bool | str = True
