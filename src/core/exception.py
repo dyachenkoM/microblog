@@ -22,6 +22,12 @@ class UserNotFoundError(APIError):
     error_message = "User not found"
 
 
+class PermissionDenied(APIError):
+    status_code = status.HTTP_404_NOT_FOUND
+    error_type = "permission_denied"
+    error_message = "Can't delete someone else's tweet"
+
+
 class TweetNotFoundError(APIError):
     status_code = status.HTTP_404_NOT_FOUND
     error_type = "not_found"
