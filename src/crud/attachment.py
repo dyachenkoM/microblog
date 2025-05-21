@@ -15,4 +15,4 @@ async def create_attachment(
     session.add(new_attachment)
     await session.commit()
 
-    return new_attachment.id
+    return new_attachment
