@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from core.exception import APIError
+from core.exception import APIError, PermissionDenied
 from core.models import Tweet, Attachment, TweetLikes
 from crud.user import get_user_by_api_key
 from core.schemas import SuccessResponse
@@ -103,6 +103,8 @@ async def delete_tweet(session: AsyncSession,
             await session.commit()
 
             return SuccessResponse(result=True)
+        else:
+            raise PermissionDenied("Permission denied")
 
     except IntegrityError as e:
         await session.rollback()

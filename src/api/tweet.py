@@ -16,7 +16,9 @@ from core.models import Tweet
 from crud.tweet import (get_all_tweets as crud_get_all_tweets,
                         like_tweet as crud_like_tweet,
                         dislike_tweet as crud_dislike_tweet,
-                        create_tweet as crud_create_tweet)
+                        create_tweet as crud_create_tweet,
+                        delete_tweet as crud_delete_tweet,
+                        )
 
 
 router = APIRouter(
@@ -54,6 +56,22 @@ async def create_tweet(tweet_data: TweetCreateRequest,
                                         tweet_media_ids=tweet_data.tweet_media_ids
                                         )
         return TweetCreateResponse(result=True, tweet_id=tweet.id)
+    except Exception as e:
+        return handle_error(e, logger)
+
+
+@router.delete("/{tweet_id}")
+async def delete_tweet(tweet_id: int,
+                       session: AsyncSession = Depends(db_helper.session_getter),
+                       api_key: str | None = Header(default="test")
+                       ):
+    if not api_key:
+        raise UserNotFoundError("API key is required")
+    try:
+        tweet = await session.get(Tweet, tweet_id)
+        if not tweet:
+            raise TweetNotFoundError("Tweet not found")
+        return await crud_delete_tweet(session=session, tweet_id=tweet_id, api_key=api_key)
     except Exception as e:
         return handle_error(e, logger)
 
