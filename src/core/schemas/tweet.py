@@ -8,9 +8,7 @@ class UserLike(BaseModel):
     user_id: int
     name: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class Tweet(BaseModel):
@@ -20,33 +18,25 @@ class Tweet(BaseModel):
     author: UserShort
     likes: list[UserLike]
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class TweetResponse(BaseModel):
     result: bool
     tweets: list[Tweet]
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class TweetCreateRequest(BaseModel):
     tweet_data: str = Field(..., min_length=1, max_length=280)
     tweet_media_ids: List[int] | None
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class TweetCreateResponse(BaseModel):
     result: bool
     tweet_id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

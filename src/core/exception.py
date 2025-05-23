@@ -6,6 +6,7 @@ from core.schemas import ErrorResponse
 
 class APIError(Exception):
     """Базовый класс для всех API исключений"""
+
     status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     error_type: str = "internal_error"
     error_message: str = "Internal server error"
@@ -64,6 +65,6 @@ def handle_error(e: Exception, logger: logging.Logger) -> ErrorResponse:
         error_type = "internal_error"
         error_message = "Internal server error"
 
-    return ErrorResponse(result=False,
-                         error_type=error_type,
-                         error_message=error_message)
+    return ErrorResponse(
+        result=False, error_type=error_type, error_message=error_message
+    )

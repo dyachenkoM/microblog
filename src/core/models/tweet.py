@@ -1,5 +1,4 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from typing_extensions import cast
 
 from .association_tables import TweetAttachment, TweetLikes
 from .base import Base
@@ -21,7 +20,7 @@ class Tweet(Base):
         back_populates="tweets",
         lazy="joined",
         cascade="all, delete",
-        single_parent=True
+        single_parent=True,
     )
     likes: Mapped[List["User"]] = relationship(
         secondary=TweetLikes.__table__,
@@ -31,9 +30,9 @@ class Tweet(Base):
 
     @hybrid_property
     def likes_count(self):
-        if hasattr(self, '_likes_count'):
+        if hasattr(self, "_likes_count"):
             return self._likes_count
-        return len(self.likes) if hasattr(self, 'likes') else 0
+        return len(self.likes) if hasattr(self, "likes") else 0
 
     @likes_count.expression
     def likes_count(cls):
@@ -43,5 +42,6 @@ class Tweet(Base):
             .label("likes_count")
         )
 
+
 from .user import User  # noqa
-from .attachment import Attachment # noqa
+from .attachment import Attachment  # noqa

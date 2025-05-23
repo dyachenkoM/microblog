@@ -11,9 +11,11 @@ from crud.user import get_user_by_api_key
 from core.schemas import SuccessResponse
 
 
-async def get_all_tweets(session: AsyncSession,
-                         api_key: str
-                         ) -> [Tweet, ]:
+async def get_all_tweets(
+    session: AsyncSession, api_key: str
+) -> [
+    Tweet,
+]:
     try:
         user = await get_user_by_api_key(session=session, api_key=api_key)
         following_ids = [u.id for u in user.following]
@@ -24,7 +26,7 @@ async def get_all_tweets(session: AsyncSession,
             .options(
                 joinedload(Tweet.author),
                 joinedload(Tweet.attachments),
-                joinedload(Tweet.likes)
+                joinedload(Tweet.likes),
             )
             .order_by(Tweet.likes_count.desc())
         )
@@ -38,17 +40,10 @@ async def get_all_tweets(session: AsyncSession,
                 "id": tweet.id,
                 "content": tweet.content,
                 "attachments": [attachment.link for attachment in tweet.attachments],
-                "author": {
-                    "id": tweet.author.id,
-                    "name": tweet.author.name
-                },
+                "author": {"id": tweet.author.id, "name": tweet.author.name},
                 "likes": [
-                    {
-                        "user_id": user.id,
-                        "name": user.name
-                    }
-                    for user in tweet.likes
-                ]
+                    {"user_id": user.id, "name": user.name} for user in tweet.likes
+                ],
             }
             formatted_tweets.append(formatted_tweet)
 
@@ -59,11 +54,11 @@ async def get_all_tweets(session: AsyncSession,
 
 
 async def create_tweet(
-        session: AsyncSession,
-        api_key: str,
-        tweet_data: str,
-        tweet_media_ids: Optional[List[int]] = None
-        ) -> Tweet:
+    session: AsyncSession,
+    api_key: str,
+    tweet_data: str,
+    tweet_media_ids: Optional[List[int]] = None,
+) -> Tweet:
     try:
         stmt = select(Attachment).where(Attachment.id.in_(tweet_media_ids))
         result = await session.execute(stmt)
@@ -71,9 +66,7 @@ async def create_tweet(
         author_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
 
         new_tweet = Tweet(
-            content=tweet_data,
-            author_id=author_id,
-            attachments=existing_media
+            content=tweet_data, author_id=author_id, attachments=existing_media
         )
         session.add(new_tweet)
         await session.commit()
@@ -89,10 +82,9 @@ async def create_tweet(
         raise APIError(f"Database error: {str(e)}")
 
 
-async def delete_tweet(session: AsyncSession,
-                       tweet_id: int,
-                       api_key: str
-                       ) -> SuccessResponse:
+async def delete_tweet(
+    session: AsyncSession, tweet_id: int, api_key: str
+) -> SuccessResponse:
     try:
         user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
         stmt = select(Tweet).where(Tweet.id == tweet_id)
@@ -114,10 +106,9 @@ async def delete_tweet(session: AsyncSession,
         raise APIError(f"Database error: {str(e)}")
 
 
-async def like_tweet(session: AsyncSession,
-                     tweet_id: int,
-                     api_key: str
-                     ) -> SuccessResponse:
+async def like_tweet(
+    session: AsyncSession, tweet_id: int, api_key: str
+) -> SuccessResponse:
     try:
         user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
         new_like = TweetLikes(user_id=user_id, tweet_id=tweet_id)
@@ -135,15 +126,14 @@ async def like_tweet(session: AsyncSession,
         raise APIError(f"Database error: {str(e)}")
 
 
-async def dislike_tweet(session: AsyncSession,
-                        tweet_id: int,
-                        api_key: str
-                        ) -> SuccessResponse:
+async def dislike_tweet(
+    session: AsyncSession, tweet_id: int, api_key: str
+) -> SuccessResponse:
     try:
         user_id = (await get_user_by_api_key(session=session, api_key=api_key)).id
-        stmt = select(TweetLikes).where(TweetLikes.tweet_id == tweet_id,
-                                        TweetLikes.user_id == user_id
-                                        )
+        stmt = select(TweetLikes).where(
+            TweetLikes.tweet_id == tweet_id, TweetLikes.user_id == user_id
+        )
         like_relation = await session.scalar(stmt)
 
         await session.delete(like_relation)

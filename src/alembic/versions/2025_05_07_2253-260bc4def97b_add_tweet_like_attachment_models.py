@@ -70,9 +70,7 @@ def upgrade() -> None:
             ["users.id"],
             name=op.f("fk_tweets_likes_user_id_users"),
         ),
-        sa.PrimaryKeyConstraint(
-            "user_id", "tweet_id", name=op.f("pk_tweets_likes")
-        ),
+        sa.PrimaryKeyConstraint("user_id", "tweet_id", name=op.f("pk_tweets_likes")),
     )
     # ### end Alembic commands ###
 

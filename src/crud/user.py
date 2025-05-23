@@ -10,7 +10,7 @@ from core.exception import (
     UserNotFoundError,
     AlreadyFollowingError,
     SelfFollowError,
-    SubscriptionNotFoundError
+    SubscriptionNotFoundError,
 )
 
 
@@ -23,9 +23,7 @@ async def get_all_users(session: AsyncSession) -> Sequence[User]:
         raise Exception(f"Database error: {str(e)}")
 
 
-async def get_user_by_id(session: AsyncSession,
-                         user_id: int
-                         ) -> User:
+async def get_user_by_id(session: AsyncSession, user_id: int) -> User:
     try:
         stmt = (
             select(User)
@@ -40,9 +38,7 @@ async def get_user_by_id(session: AsyncSession,
         raise Exception(f"Database error: {str(e)}")
 
 
-async def get_user_by_api_key(session: AsyncSession,
-                              api_key: str
-                              ) -> User:
+async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User:
     try:
         stmt = select(UserKey).where(UserKey.api_key == api_key)
         user_key = await session.scalar(stmt)
@@ -56,10 +52,8 @@ async def get_user_by_api_key(session: AsyncSession,
 
 
 async def follow_user(
-        session: AsyncSession,
-        follower_id: int,
-        following_id: int
-        ) -> SuccessResponse:
+    session: AsyncSession, follower_id: int, following_id: int
+) -> SuccessResponse:
     try:
         if follower_id == following_id:
             raise SelfFollowError("Cannot follow yourself")
@@ -69,15 +63,12 @@ async def follow_user(
 
         stmt = select(FollowersTable).where(
             FollowersTable.follower_id == follower_id,
-            FollowersTable.following_id == following_id
+            FollowersTable.following_id == following_id,
         )
         if await session.scalar(stmt):
             raise AlreadyFollowingError("Already following this user")
 
-        new_follow = FollowersTable(
-            follower_id=follower_id,
-            following_id=following_id
-        )
+        new_follow = FollowersTable(follower_id=follower_id, following_id=following_id)
         session.add(new_follow)
         await session.commit()
 
@@ -94,14 +85,12 @@ async def follow_user(
 
 
 async def unfollow_user(
-        session: AsyncSession,
-        follower_id: int,
-        following_id: int
-        ) -> SuccessResponse:
+    session: AsyncSession, follower_id: int, following_id: int
+) -> SuccessResponse:
     try:
         stmt = select(FollowersTable).where(
             FollowersTable.follower_id == follower_id,
-            FollowersTable.following_id == following_id
+            FollowersTable.following_id == following_id,
         )
         follow_relation = await session.scalar(stmt)
 

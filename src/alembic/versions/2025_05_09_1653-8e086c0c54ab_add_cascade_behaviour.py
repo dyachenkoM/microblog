@@ -92,9 +92,7 @@ def upgrade() -> None:
         ["id"],
         ondelete="CASCADE",
     )
-    op.drop_constraint(
-        "fk_users_keys_user_id_users", "users_keys", type_="foreignkey"
-    )
+    op.drop_constraint("fk_users_keys_user_id_users", "users_keys", type_="foreignkey")
     op.create_foreign_key(
         op.f("fk_users_keys_user_id_users"),
         "users_keys",

@@ -17,7 +17,7 @@ def setup_logging() -> logging.Logger:
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler()]
+        handlers=[logging.StreamHandler()],
     )
     return logging.getLogger("app")
 

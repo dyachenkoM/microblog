@@ -10,19 +10,17 @@ from core.schemas import ErrorResponse
 from core.schemas.attachment import AttachmentResponse
 from crud.attachment import create_attachment
 
-router = APIRouter(
-    prefix="/medias",
-    tags=["medias"]
-)
+router = APIRouter(prefix="/medias", tags=["medias"])
 
 logger = logging.getLogger("route_media")
 
 
 @router.post("", response_model=AttachmentResponse)
-async def file_upload(file: UploadFile,
-                      session: AsyncSession = Depends(db_helper.session_getter),
-                      api_key: str | None = Header(default="test")
-                      ) -> AttachmentResponse | ErrorResponse:
+async def file_upload(
+    file: UploadFile,
+    session: AsyncSession = Depends(db_helper.session_getter),
+    api_key: str | None = Header(default="test"),
+) -> AttachmentResponse | ErrorResponse:
     try:
         media_url = await s3_client.upload_file(file.file, file.filename)
         media_id = (await create_attachment(session=session, url=media_url)).id
