@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -22,7 +22,12 @@ async def get_all_tweets(
 
         stmt = (
             select(Tweet)
-            .where(Tweet.author_id.in_(following_ids))
+            .where(
+                or_(
+                    Tweet.author_id.in_(following_ids),
+                    Tweet.author_id == user.id
+                )
+            )
             .options(
                 joinedload(Tweet.author),
                 joinedload(Tweet.attachments),
