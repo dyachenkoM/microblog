@@ -1,6 +1,8 @@
 from fastapi import status
 import logging
 
+from fastapi.responses import JSONResponse
+
 from core.schemas import ErrorResponse
 
 
@@ -24,7 +26,7 @@ class UserNotFoundError(APIError):
 
 
 class PermissionDenied(APIError):
-    status_code = status.HTTP_404_NOT_FOUND
+    status_code = status.HTTP_403_FORBIDDEN
     error_type = "permission_denied"
     error_message = "Can't delete someone else's tweet"
 
@@ -53,7 +55,7 @@ class SubscriptionNotFoundError(APIError):
     error_message = "Subscription not found"
 
 
-def handle_error(e: Exception, logger: logging.Logger) -> ErrorResponse:
+def handle_error(e: Exception, logger: logging.Logger) -> JSONResponse:
     """Унифицированный обработчик ошибок"""
     if isinstance(e, APIError):
         status_code = e.status_code
@@ -65,6 +67,13 @@ def handle_error(e: Exception, logger: logging.Logger) -> ErrorResponse:
         error_type = "internal_error"
         error_message = "Internal server error"
 
-    return ErrorResponse(
-        result=False, error_type=error_type, error_message=error_message
+    error_response = ErrorResponse(
+        result=False,
+        error_type=error_type,
+        error_message=error_message
+    )
+
+    return JSONResponse(
+        content=error_response.dict(),
+        status_code=status_code
     )

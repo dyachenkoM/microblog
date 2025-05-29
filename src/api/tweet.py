@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, Header
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_helper
@@ -9,7 +10,6 @@ from core.schemas import (
     TweetCreateRequest,
     TweetCreateResponse,
     SuccessResponse,
-    ErrorResponse,
 )
 from core.exception import TweetNotFoundError, handle_error, UserNotFoundError
 from core.models import Tweet
@@ -31,7 +31,7 @@ logger = logging.getLogger("route_tweet")
 async def get_all_tweets(
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
-) -> TweetResponse | ErrorResponse:
+) -> TweetResponse | JSONResponse:
     if not api_key:
         raise UserNotFoundError("API key is required")
     try:
@@ -46,7 +46,7 @@ async def create_tweet(
     tweet_data: TweetCreateRequest,
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
-) -> TweetCreateResponse | ErrorResponse:
+) -> TweetCreateResponse | JSONResponse:
     if not api_key:
         raise UserNotFoundError("API key is required")
     try:
@@ -61,12 +61,12 @@ async def create_tweet(
         return handle_error(e, logger)
 
 
-@router.delete("/{tweet_id}")
+@router.delete("/{tweet_id}", response_model=SuccessResponse)
 async def delete_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
-) -> SuccessResponse | ErrorResponse:
+) -> SuccessResponse | JSONResponse:
     if not api_key:
         raise UserNotFoundError("API key is required")
     try:
@@ -85,7 +85,7 @@ async def like_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
-) -> SuccessResponse | ErrorResponse:
+) -> SuccessResponse | JSONResponse:
     if not api_key:
         raise UserNotFoundError("API key is required")
     try:
@@ -104,7 +104,7 @@ async def dislike_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
-) -> SuccessResponse | ErrorResponse:
+) -> SuccessResponse | JSONResponse:
     if not api_key:
         raise UserNotFoundError("API key is required")
     try:
