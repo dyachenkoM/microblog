@@ -1,11 +1,12 @@
 import logging
 
 from fastapi import APIRouter, Depends, Header
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
 from core import db_helper
-from core.schemas import UserResponse, SuccessResponse, UserFull, ErrorResponse
+from core.schemas import UserResponse, SuccessResponse, UserFull
 from core.exception import UserNotFoundError, handle_error
 
 from crud.user import (
@@ -41,7 +42,7 @@ async def get_current_user_id(
 async def get_my_info(
     user_id: int = Depends(get_current_user_id),
     session: AsyncSession = Depends(db_helper.session_getter),
-) -> UserResponse | ErrorResponse:
+) -> UserResponse | JSONResponse:
     try:
         user = await get_user_by_id(session=session, user_id=user_id)
         return UserResponse(result="true", user=UserFull.model_validate(user))
@@ -53,7 +54,7 @@ async def get_my_info(
 async def get_user(
     user_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
-) -> UserResponse | ErrorResponse:
+) -> UserResponse | JSONResponse:
     try:
         user = await get_user_by_id(session=session, user_id=user_id)
         return UserResponse(result="true", user=UserFull.model_validate(user))
@@ -66,7 +67,7 @@ async def follow_user(
     target_id: int,
     user_id: int = Depends(get_current_user_id),
     session: AsyncSession = Depends(db_helper.session_getter),
-) -> SuccessResponse | ErrorResponse:
+) -> SuccessResponse | JSONResponse:
     try:
         return await follow(
             session=session, follower_id=user_id, following_id=target_id
@@ -80,7 +81,7 @@ async def unfollow_user(
     target_id: int,
     user_id: int = Depends(get_current_user_id),
     session: AsyncSession = Depends(db_helper.session_getter),
-) -> SuccessResponse | ErrorResponse:
+) -> SuccessResponse | JSONResponse:
     try:
         return await unfollow(
             session=session, follower_id=user_id, following_id=target_id
