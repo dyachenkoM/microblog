@@ -1,7 +1,6 @@
 from fastapi import status
-import logging
 
-from fastapi.responses import JSONResponse
+from fastapi.responses import ORJSONResponse
 
 from core.schemas import ErrorResponse
 
@@ -55,14 +54,13 @@ class SubscriptionNotFoundError(APIError):
     error_message = "Subscription not found"
 
 
-def handle_error(e: Exception, logger: logging.Logger) -> JSONResponse:
+def handle_error(e: Exception) -> ORJSONResponse:
     """Унифицированный обработчик ошибок"""
     if isinstance(e, APIError):
         status_code = e.status_code
         error_type = e.error_type
         error_message = e.error_message
     else:
-        logger.error(f"Unexpected error: {str(e)}", exc_info=True)
         status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         error_type = "internal_error"
         error_message = "Internal server error"
@@ -73,7 +71,7 @@ def handle_error(e: Exception, logger: logging.Logger) -> JSONResponse:
         error_message=error_message
     )
 
-    return JSONResponse(
+    return ORJSONResponse(
         content=error_response.dict(),
         status_code=status_code
     )
