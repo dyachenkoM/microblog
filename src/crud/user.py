@@ -105,3 +105,21 @@ async def unfollow_user(
     except SQLAlchemyError as e:
         await session.rollback()
         raise Exception(f"Database error: {str(e)}")
+
+
+async def create_user(
+        session: AsyncSession, username: str
+) -> SuccessResponse:
+    try:
+        user = User(name=username)
+        session.add(user)
+        await session.flush()
+
+        key = UserKey(api_key="api-friend", user_id=user.id)
+        session.add(key)
+        await session.commit()
+
+        return SuccessResponse(result=True)
+    except SQLAlchemyError as e:
+        await session.rollback()
+        raise Exception(f"Database error: {str(e)}")
