@@ -15,6 +15,7 @@ from crud.user import (
     get_user_by_api_key,
     follow_user as follow,
     unfollow_user as unfollow,
+    create_user as create,
 )
 
 router = APIRouter(
@@ -95,4 +96,16 @@ async def unfollow_user(
         )
     except Exception as e:
         logger.error("%s: user_id = %s; target_id = %s", e, user_id, target_id)
+        return handle_error(e)
+
+
+@router.post("/create/{username}", response_model=SuccessResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    username: str,
+    session: AsyncSession = Depends(db_helper.session_getter),
+) -> SuccessResponse | ORJSONResponse:
+    try:
+        return await create(session=session, username=username)
+    except Exception as e:
+        logger.error("%s: Error while create user", e)
         return handle_error(e)
