@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, UploadFile, Depends, Header
+from fastapi import APIRouter, UploadFile, Depends, Header, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,7 +17,7 @@ logger = logging.getLogger("route_media")
 configure_logging(level=logging.DEBUG)
 
 
-@router.post("", response_model=AttachmentResponse)
+@router.post("", response_model=AttachmentResponse, status_code=status.HTTP_201_CREATED)
 async def file_upload(
     file: UploadFile,
     session: AsyncSession = Depends(db_helper.session_getter),

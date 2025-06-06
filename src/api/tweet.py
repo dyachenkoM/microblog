@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,7 +29,7 @@ logger = logging.getLogger("route_tweet")
 configure_logging(level=logging.DEBUG)
 
 
-@router.get("", response_model=TweetResponse)
+@router.get("", response_model=TweetResponse, status_code=status.HTTP_200_OK)
 async def get_all_tweets(
     session: AsyncSession = Depends(db_helper.session_getter),
     api_key: str | None = Header(default="test"),
@@ -45,7 +45,7 @@ async def get_all_tweets(
         return handle_error(e)
 
 
-@router.post("", response_model=TweetCreateResponse)
+@router.post("", response_model=TweetCreateResponse, status_code=status.HTTP_201_CREATED)
 async def create_tweet(
     tweet_data: TweetCreateRequest,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -67,7 +67,7 @@ async def create_tweet(
         return handle_error(e)
 
 
-@router.delete("/{tweet_id}", response_model=SuccessResponse)
+@router.delete("/{tweet_id}", response_model=SuccessResponse, status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -88,7 +88,7 @@ async def delete_tweet(
         return handle_error(e)
 
 
-@router.post("/{tweet_id}/likes", response_model=SuccessResponse)
+@router.post("/{tweet_id}/likes", response_model=SuccessResponse, status_code=status.HTTP_201_CREATED)
 async def like_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -109,7 +109,7 @@ async def like_tweet(
         return handle_error(e)
 
 
-@router.delete("/{tweet_id}/likes", response_model=SuccessResponse)
+@router.delete("/{tweet_id}/likes", response_model=SuccessResponse, status_code=status.HTTP_204_NO_CONTENT)
 async def dislike_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),

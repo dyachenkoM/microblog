@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
@@ -42,7 +42,7 @@ async def get_current_user_id(
         return handle_error(e)
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_my_info(
     user_id: int = Depends(get_current_user_id),
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -55,7 +55,7 @@ async def get_my_info(
         return handle_error(e)
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_user(
     user_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -68,7 +68,7 @@ async def get_user(
         return handle_error(e)
 
 
-@router.post("/{target_id}/follow", response_model=SuccessResponse)
+@router.post("/{target_id}/follow", response_model=SuccessResponse, status_code=status.HTTP_201_CREATED)
 async def follow_user(
     target_id: int,
     user_id: int = Depends(get_current_user_id),
@@ -83,7 +83,7 @@ async def follow_user(
         return handle_error(e)
 
 
-@router.delete("/{target_id}/follow", response_model=SuccessResponse)
+@router.delete("/{target_id}/follow", response_model=SuccessResponse, status_code=status.HTTP_204_NO_CONTENT)
 async def unfollow_user(
     target_id: int,
     user_id: int = Depends(get_current_user_id),
