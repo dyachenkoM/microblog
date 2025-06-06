@@ -40,3 +40,6 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/test_db
         run: uv run pytest --ignore=tests/test_medias.py
+
+      - name: Run Ruff
+        run: ruff check --output-format=github .
