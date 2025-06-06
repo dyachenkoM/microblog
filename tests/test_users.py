@@ -11,7 +11,7 @@ async def test_get_my_info(client: AsyncClient):
         "id": 1,
         "name": "TestUser",
         "followers": [],
-        "following": []
+        "following": [],
     }
 
 
@@ -24,7 +24,7 @@ async def test_get_user_info(client: AsyncClient):
         "id": 1,
         "name": "TestUser",
         "followers": [],
-        "following": []
+        "following": [],
     }
 
 
@@ -39,12 +39,7 @@ async def test_follow_user(client: AsyncClient, db_session):
         "id": 1,
         "name": "TestUser",
         "followers": [],
-        "following": [
-            {
-                "id": 2,
-                "name": "friend"
-            }
-        ]
+        "following": [{"id": 2, "name": "friend"}],
     }
 
 
@@ -58,5 +53,5 @@ async def test_unfollow_user(client: AsyncClient, db_session):
         "id": 1,
         "name": "TestUser",
         "followers": [],
-        "following": []
+        "following": [],
     }

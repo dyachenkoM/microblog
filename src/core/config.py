@@ -44,7 +44,7 @@ class Settings(BaseSettings):
         env_file=(
             BASE_DIR / ".env.test",
             BASE_DIR / ".env.template",
-            BASE_DIR / ".env"
+            BASE_DIR / ".env",
         ),
         case_sensitive=False,
         env_nested_delimiter="__",

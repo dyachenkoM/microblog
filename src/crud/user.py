@@ -107,9 +107,7 @@ async def unfollow_user(
         raise Exception(f"Database error: {str(e)}")
 
 
-async def create_user(
-        session: AsyncSession, username: str
-) -> SuccessResponse:
+async def create_user(session: AsyncSession, username: str) -> SuccessResponse:
     try:
         user = User(name=username)
         session.add(user)

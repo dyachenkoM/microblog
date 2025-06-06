@@ -12,9 +12,11 @@ async def test_get_all_tweets_empty(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_create_tweet_wo_media(client: AsyncClient):
-    response = await client.post("/api/tweets", headers={"api-key": "test"}, json={"tweet_data": "string",
-                                                                                   "tweet_media_ids": []
-                                                                                   })
+    response = await client.post(
+        "/api/tweets",
+        headers={"api-key": "test"},
+        json={"tweet_data": "string", "tweet_media_ids": []},
+    )
     assert response.status_code == 201
     assert response.json()["result"] is True
     assert response.json()["tweet_id"] == 1

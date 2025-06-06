@@ -45,7 +45,9 @@ async def get_all_tweets(
         return handle_error(e)
 
 
-@router.post("", response_model=TweetCreateResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "", response_model=TweetCreateResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_tweet(
     tweet_data: TweetCreateRequest,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -67,7 +69,9 @@ async def create_tweet(
         return handle_error(e)
 
 
-@router.delete("/{tweet_id}", response_model=SuccessResponse, status_code=status.HTTP_200_OK)
+@router.delete(
+    "/{tweet_id}", response_model=SuccessResponse, status_code=status.HTTP_200_OK
+)
 async def delete_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -88,7 +92,11 @@ async def delete_tweet(
         return handle_error(e)
 
 
-@router.post("/{tweet_id}/likes", response_model=SuccessResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{tweet_id}/likes",
+    response_model=SuccessResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def like_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
@@ -109,7 +117,9 @@ async def like_tweet(
         return handle_error(e)
 
 
-@router.delete("/{tweet_id}/likes", response_model=SuccessResponse, status_code=status.HTTP_200_OK)
+@router.delete(
+    "/{tweet_id}/likes", response_model=SuccessResponse, status_code=status.HTTP_200_OK
+)
 async def dislike_tweet(
     tweet_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),

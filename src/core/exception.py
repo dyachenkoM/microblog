@@ -66,12 +66,7 @@ def handle_error(e: Exception) -> ORJSONResponse:
         error_message = "Internal server error"
 
     error_response = ErrorResponse(
-        result=False,
-        error_type=error_type,
-        error_message=error_message
+        result=False, error_type=error_type, error_message=error_message
     )
 
-    return ORJSONResponse(
-        content=error_response.dict(),
-        status_code=status_code
-    )
+    return ORJSONResponse(content=error_response.dict(), status_code=status_code)
