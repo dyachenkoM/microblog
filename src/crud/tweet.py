@@ -22,12 +22,7 @@ async def get_all_tweets(
 
         stmt = (
             select(Tweet)
-            .where(
-                or_(
-                    Tweet.author_id.in_(following_ids),
-                    Tweet.author_id == user.id
-                )
-            )
+            .where(or_(Tweet.author_id.in_(following_ids), Tweet.author_id == user.id))
             .options(
                 joinedload(Tweet.author),
                 joinedload(Tweet.attachments),

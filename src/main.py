@@ -5,31 +5,18 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 from api import router as api_router
 from core import db_helper
+from core.logger import configure_logging
 
 
-class AppState:
-    def __init__(self):
-        self.logger: logging.Logger | None = None
-
-
-def setup_logging() -> logging.Logger:
-    """Настройка логгера для всего приложения"""
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler()],
-    )
-    return logging.getLogger("app")
+logger = logging.getLogger("main_app")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    app.state = AppState()
-    app.state.logger = setup_logging()
-
-    app.state.logger.info("Application starting...")
+    configure_logging(level=logging.DEBUG)
+    logger.info("Application starting...")
     yield
-    app.state.logger.info("Application shutting down...")
+    logger.info("Application shutting down...")
     await db_helper.dispose()
 
 
